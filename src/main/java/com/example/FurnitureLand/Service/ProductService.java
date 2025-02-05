@@ -25,4 +25,8 @@ public class ProductService {
         Optional<Product> product = productRepository.findByProductCode(productCode);
         return product.orElseThrow(() -> new RuntimeException("Product not found"));
     }
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
 }
