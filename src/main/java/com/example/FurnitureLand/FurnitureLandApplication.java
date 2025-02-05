@@ -1,0 +1,13 @@
+package com.example.FurnitureLand;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class FurnitureLandApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(FurnitureLandApplication.class, args);
+	}
+
+}
