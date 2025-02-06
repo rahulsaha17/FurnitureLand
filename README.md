@@ -18,7 +18,7 @@ FurnitureLand is a **Java Spring Boot** application designed to manage furniture
 ## Installation & Setup  
 1. Clone the repository:  
    ```sh
-   git clone https://github.com/your-username/FurnitureLand.git
+   git clone https://github.com/rahulsaha17/FurnitureLand.git
 2. Rub the repository:  
    ```sh
    mvn spring-boot:run
