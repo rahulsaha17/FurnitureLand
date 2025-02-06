@@ -18,4 +18,10 @@ public class BillingController {
         Billing createdBilling = billingService.createBilling(billing);
         return ResponseEntity.status(201).body(createdBilling);
     }
+
+    @DeleteMapping("/cancel/{billingId}")
+    public ResponseEntity<String> cancelBilling(@PathVariable Long billingId) {
+        billingService.cancelBilling(billingId);
+        return ResponseEntity.ok("Billing canceled successfully");
+    }
 }

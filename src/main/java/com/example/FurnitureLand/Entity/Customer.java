@@ -6,9 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "customers")
+@Getter
+@Setter
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +22,6 @@ public class Customer {
     private String phoneNumber; // Unique identifier based on phone number
     private String name;
     private String email;
-
-    // Getters and Setters
+    private String address;
+    private Double discountPercentage;
 }

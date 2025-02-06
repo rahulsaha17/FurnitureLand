@@ -14,6 +14,11 @@ public class CustomerService {
     public Customer addCustomer(Customer customer) {
         return customerRepository.save(customer);
     }
+    public Customer addCustomerDiscount(String phoneNumber, Double discountPercentage) {
+        Customer customer = getCustomerByPhoneNumber(phoneNumber);
+        customer.setDiscountPercentage(discountPercentage);
+        return customerRepository.save(customer);
+    }
 
     public Customer getCustomerByPhoneNumber(String phoneNumber) {
         return customerRepository.findByPhoneNumber(phoneNumber)

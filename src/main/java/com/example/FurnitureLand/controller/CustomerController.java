@@ -13,9 +13,15 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @PostMapping
+    @PostMapping("/addCustomer")
     public ResponseEntity<Customer> addCustomer(@RequestBody Customer customer) {
         Customer savedCustomer = customerService.addCustomer(customer);
+        return ResponseEntity.status(201).body(savedCustomer);
+    }
+
+    @PostMapping("/addCustomerDiscount/{phoneNumber}/{discountPercentage}")
+    public ResponseEntity<Customer> addCustomerDiscount(@PathVariable String phoneNumber, @PathVariable Double discountPercentage) {
+        Customer savedCustomer = customerService.addCustomerDiscount(phoneNumber, discountPercentage);
         return ResponseEntity.status(201).body(savedCustomer);
     }
 
