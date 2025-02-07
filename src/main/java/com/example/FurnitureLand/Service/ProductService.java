@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -28,5 +29,17 @@ public class ProductService {
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    public boolean hasProduct(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        return product.isEmpty();
+    }
+
+    public List<Product> getProducts(List<Product> products) {
+        return products.stream()
+                .map(product -> productRepository.findById(product.getId()).orElseThrow(
+                        () -> new RuntimeException("Product not found with ID: " + product.getId())))
+                .collect(Collectors.toList());
     }
 }

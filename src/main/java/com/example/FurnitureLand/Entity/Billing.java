@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +23,8 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "billings")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Billing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,8 +36,10 @@ public class Billing {
 
     @OneToMany(mappedBy = "billing", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products;
-
+    @Column(name = "\"totalAmount\"")
     private double totalAmount;
+    @Column(name = "\"gstNumber\"")
     private String gstNumber;
+    @Column(name = "\"billingDate\"")
     private Date billingDate;
 }

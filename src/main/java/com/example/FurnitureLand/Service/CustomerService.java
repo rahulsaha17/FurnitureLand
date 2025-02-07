@@ -5,6 +5,8 @@ import com.example.FurnitureLand.Repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerService {
 
@@ -23,5 +25,14 @@ public class CustomerService {
     public Customer getCustomerByPhoneNumber(String phoneNumber) {
         return customerRepository.findByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
+    }
+
+    public List<Customer> getCustomers() {
+        return customerRepository.findAll();
+    }
+
+    public Customer getCustomerById(Long customerId) {
+        return customerRepository.findById(customerId)
+                .orElse(null);
     }
 }

@@ -8,19 +8,29 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "products")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "\"productCode\"", nullable = false, unique = true)
     private String productCode;  // Unique product code
-
+    @Column(name = "\"hsnNumber\"")
     private String hsnNumber;
+    @Column(name = "\"costPrice\"")
     private double costPrice;
+    @Column(name = "\"marketPrice\"")
     private double marketPrice;
     private String description;
     private String color;

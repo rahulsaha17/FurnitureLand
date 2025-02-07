@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
@@ -29,5 +31,11 @@ public class CustomerController {
     public ResponseEntity<Customer> getCustomerByPhoneNumber(@PathVariable String phoneNumber) {
         Customer customer = customerService.getCustomerByPhoneNumber(phoneNumber);
         return ResponseEntity.ok(customer);
+    }
+
+    @GetMapping("/getCustomers")
+    public ResponseEntity<List<Customer>> getCustomerByPhoneNumber() {
+        List<Customer> customers = customerService.getCustomers();
+        return ResponseEntity.ok(customers);
     }
 }
