@@ -1,7 +1,6 @@
-package com.example.FurnitureLand.controller;
+package com.example.FurnitureLand.Controller;
 
 import com.example.FurnitureLand.Entity.Billing;
-import com.example.FurnitureLand.Entity.Product;
 import com.example.FurnitureLand.Service.BillingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.example.FurnitureLand.controller;
+package com.example.FurnitureLand.Controller;
 
 import com.example.FurnitureLand.Entity.Admin;
 import com.example.FurnitureLand.Service.AdminService;
