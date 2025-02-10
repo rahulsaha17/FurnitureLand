@@ -37,7 +37,8 @@ FurnitureLand is a **Java Spring Boot** application designed to manage furniture
 - **`GET /getProducts`** - Get all available products.  
 
 ### Billing API (`/api/billings`)  
-- **`POST /`** - Create a new bill with applicable discounts.  
+- **`POST /`** - Create a new bill with applicable discounts.
+- **`GET /getBillings`** - Get all available billings. 
 - **`DELETE /cancel/{billingId}`** - Cancel a bill if required.  
 
 
