@@ -1,8 +1,10 @@
 package com.example.FurnitureLand.Controller;
 
+import com.example.FurnitureLand.Entity.Billing;
 import com.example.FurnitureLand.Entity.Customer;
 import com.example.FurnitureLand.Service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,16 @@ public class CustomerController {
     public ResponseEntity<Customer> addCustomer(@RequestBody Customer customer) {
         Customer savedCustomer = customerService.addCustomer(customer);
         return ResponseEntity.status(201).body(savedCustomer);
+    }
+
+    @PostMapping("/updateCustomer")
+    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
+        try {
+            Customer savedCustomer = customerService.updateCustomer(id, customer);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PostMapping("/addCustomerDiscount/{phoneNumber}/{discountPercentage}")

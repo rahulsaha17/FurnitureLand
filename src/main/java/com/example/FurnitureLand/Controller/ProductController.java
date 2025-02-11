@@ -5,6 +5,7 @@ import com.example.FurnitureLand.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,12 @@ public class ProductController {
         return ResponseEntity.status(201).body(savedProduct);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
+        Product product = productService.updateProduct(id, updatedProduct);
+        return ResponseEntity.ok(product);
+    }
+
     @GetMapping("/hsn/{hsn}")
     public ResponseEntity<List<Product>> getProductsByHsn(@PathVariable String hsn) {
         List<Product> products = productService.getProductsByHsn(hsn);
@@ -34,12 +41,12 @@ public class ProductController {
     }
 
     @GetMapping("/code/{productCode}")
-    public ResponseEntity<Product> getProductByCode(@PathVariable String productCode) {
-        Product product = productService.getProductByCode(productCode);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<List<Product>> getProductByCode(@PathVariable String productCode) {
+        List<Product> products = productService.getProductsByCode(productCode);
+        return ResponseEntity.ok(products);
     }
     @GetMapping("/getProducts")
-    public ResponseEntity<List<Product>> getProducts() {
+    public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }

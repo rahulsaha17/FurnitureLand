@@ -1,7 +1,10 @@
 package com.example.FurnitureLand.Entity;
 
+import com.example.FurnitureLand.Enum.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,7 +28,7 @@ public class Product {
     private Long id;
 
     @Column(name = "\"productCode\"", nullable = false, unique = true)
-    private String productCode;  // Unique product code
+    private String productCode;
     @Column(name = "\"hsnNumber\"")
     private String hsnNumber;
     @Column(name = "\"costPrice\"")
@@ -34,8 +37,10 @@ public class Product {
     private double marketPrice;
     private String description;
     private String color;
+    private Integer quantity;
     private String manufacturer;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
     @ManyToOne
     @JoinColumn(name = "billing_id")  // Foreign Key in Product Table
     private Billing billing;

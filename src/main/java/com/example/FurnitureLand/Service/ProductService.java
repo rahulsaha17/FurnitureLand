@@ -1,6 +1,7 @@
 package com.example.FurnitureLand.Service;
 
 import com.example.FurnitureLand.Entity.Product;
+import com.example.FurnitureLand.Enum.Status;
 import com.example.FurnitureLand.Repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,18 +23,16 @@ public class ProductService {
         return productRepository.findByHsnNumber(hsn);
     }
 
-    public Product getProductByCode(String productCode) {
-        Optional<Product> product = productRepository.findByProductCode(productCode);
-        return product.orElseThrow(() -> new RuntimeException("Product not found"));
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElse(null);
+    }
+
+    public List<Product> getProductsByCode(String productCode) {
+        return productRepository.findByProductCode(productCode);
     }
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
-    }
-
-    public boolean hasProduct(Long id) {
-        Optional<Product> product = productRepository.findById(id);
-        return product.isEmpty();
     }
 
     public List<Product> getProducts(List<Product> products) {
@@ -41,5 +40,30 @@ public class ProductService {
                 .map(product -> productRepository.findById(product.getId()).orElseThrow(
                         () -> new RuntimeException("Product not found with ID: " + product.getId())))
                 .collect(Collectors.toList());
+    }
+
+    public Product updateProduct(Long id, Product updatedProduct) {
+        Optional<Product> existingProductOpt = productRepository.findById(id);
+
+        if (existingProductOpt.isPresent()) {
+            Product existingProduct = existingProductOpt.get();
+
+            // Update fields
+            existingProduct.setProductCode(updatedProduct.getProductCode());
+            existingProduct.setHsnNumber(updatedProduct.getHsnNumber());
+            existingProduct.setCostPrice(updatedProduct.getCostPrice());
+            existingProduct.setMarketPrice(updatedProduct.getMarketPrice());
+            existingProduct.setDescription(updatedProduct.getDescription());
+            existingProduct.setColor(updatedProduct.getColor());
+            existingProduct.setQuantity(updatedProduct.getQuantity());
+            existingProduct.setManufacturer(updatedProduct.getManufacturer());
+            if (updatedProduct.getStatus() != null) {
+                existingProduct.setStatus(updatedProduct.getStatus());
+            }
+
+            return productRepository.save(existingProduct);
+        } else {
+            throw new RuntimeException("Product not found with ID: " + id);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.example.FurnitureLand.Controller;
 import com.example.FurnitureLand.Entity.Billing;
 import com.example.FurnitureLand.Service.BillingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +17,13 @@ public class BillingController {
     private BillingService billingService;
 
     @PostMapping
-    public ResponseEntity<Billing> createBilling(@RequestBody Billing billing) {
-        Billing createdBilling = billingService.createBilling(billing);
-        if(createdBilling==null){
-            ResponseEntity.status(400).body("Product is not present.");
+    public ResponseEntity<?> createBilling(@RequestBody Billing billing) {
+        try {
+            Billing createdBilling = billingService.createBilling(billing);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdBilling);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.status(201).body(createdBilling);
     }
 
     @GetMapping("/getBillings")
@@ -31,8 +33,12 @@ public class BillingController {
     }
 
     @DeleteMapping("/cancel/{billingId}")
-    public ResponseEntity<String> cancelBilling(@PathVariable Long billingId) {
-        billingService.cancelBilling(billingId);
-        return ResponseEntity.ok("Billing canceled successfully");
+    public ResponseEntity<?> cancelBilling(@PathVariable Long billingId) {
+        try {
+            billingService.cancelBilling(billingId);
+            return ResponseEntity.ok("Billing canceled successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
