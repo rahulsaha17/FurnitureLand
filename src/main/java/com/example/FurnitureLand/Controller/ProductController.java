@@ -1,8 +1,10 @@
 package com.example.FurnitureLand.Controller;
 
+import com.example.FurnitureLand.Entity.Billing;
 import com.example.FurnitureLand.Entity.Product;
 import com.example.FurnitureLand.Service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,21 +25,39 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping("/addProduct")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        Product savedProduct = productService.addProduct(product);
-        return ResponseEntity.status(201).body(savedProduct);
+    public ResponseEntity<?> addProduct(@RequestBody Product product) {
+        try {
+            Product savedProduct = productService.addProduct(product);
+            return ResponseEntity.status(201).body(savedProduct);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
-        Product product = productService.updateProduct(id, updatedProduct);
-        return ResponseEntity.ok(product);
+    @PutMapping("/updateProduct/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
+        try {
+            Product product = productService.updateProduct(id, updatedProduct);
+            return ResponseEntity.ok(product);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/hsn/{hsn}")
     public ResponseEntity<List<Product>> getProductsByHsn(@PathVariable String hsn) {
         List<Product> products = productService.getProductsByHsn(hsn);
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/getProductByDescription/{description}")
+    public ResponseEntity<?> getProductByDescription(@PathVariable String description) {
+        try {
+            Product product = productService.getProductByDescription(description);
+            return ResponseEntity.ok(product);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/code/{productCode}")

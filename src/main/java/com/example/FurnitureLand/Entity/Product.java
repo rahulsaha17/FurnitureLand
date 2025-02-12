@@ -1,6 +1,7 @@
 package com.example.FurnitureLand.Entity;
 
 import com.example.FurnitureLand.Enum.Status;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,8 +9,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -27,7 +26,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "\"productCode\"", nullable = false, unique = true)
+    @Column(name = "\"productCode\"", nullable = false)
     private String productCode;
     @Column(name = "\"hsnNumber\"")
     private String hsnNumber;
@@ -35,14 +34,12 @@ public class Product {
     private double costPrice;
     @Column(name = "\"marketPrice\"")
     private double marketPrice;
+    @Column(unique = true, nullable = false)
     private String description;
     private String color;
     private Integer quantity;
     private String manufacturer;
     @Enumerated(EnumType.STRING)
     private Status status;
-    @ManyToOne
-    @JoinColumn(name = "billing_id")  // Foreign Key in Product Table
-    private Billing billing;
 
 }

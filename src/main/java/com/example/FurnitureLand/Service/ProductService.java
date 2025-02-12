@@ -16,7 +16,13 @@ public class ProductService {
     private ProductRepository productRepository;
 
     public Product addProduct(Product product) {
-        return productRepository.save(product);
+        if(product.getQuantity()==null || product.getQuantity()<0){
+            throw new RuntimeException("Invalid product quantity.");
+        } else if (product.getQuantity()>0 && Status.SOLD==product.getStatus()) {
+            throw new RuntimeException("Product status cannot be sold for positive quantity product");
+        }else {
+            return productRepository.save(product);
+        }
     }
 
     public List<Product> getProductsByHsn(String hsn) {
@@ -35,13 +41,6 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> getProducts(List<Product> products) {
-        return products.stream()
-                .map(product -> productRepository.findById(product.getId()).orElseThrow(
-                        () -> new RuntimeException("Product not found with ID: " + product.getId())))
-                .collect(Collectors.toList());
-    }
-
     public Product updateProduct(Long id, Product updatedProduct) {
         Optional<Product> existingProductOpt = productRepository.findById(id);
 
@@ -55,9 +54,16 @@ public class ProductService {
             existingProduct.setMarketPrice(updatedProduct.getMarketPrice());
             existingProduct.setDescription(updatedProduct.getDescription());
             existingProduct.setColor(updatedProduct.getColor());
+            if(updatedProduct.getQuantity()!=null && updatedProduct.getQuantity()<0){
+                throw new RuntimeException("Invalid product quantity.");
+            }
             existingProduct.setQuantity(updatedProduct.getQuantity());
             existingProduct.setManufacturer(updatedProduct.getManufacturer());
-            if (updatedProduct.getStatus() != null) {
+            if (updatedProduct.getStatus() == Status.SELF_USED) {
+                existingProduct.setStatus(updatedProduct.getStatus());
+            } else if (updatedProduct.getStatus() == Status.SOLD && updatedProduct.getQuantity() > 0) {
+                throw new RuntimeException("Product status cannot be sold for a product with positive quantity");
+            } else if (updatedProduct.getStatus() != null) {
                 existingProduct.setStatus(updatedProduct.getStatus());
             }
 
@@ -65,5 +71,9 @@ public class ProductService {
         } else {
             throw new RuntimeException("Product not found with ID: " + id);
         }
+    }
+
+    public Product getProductByDescription(String productDescription) {
+        return productRepository.findByDescription(productDescription);
     }
 }

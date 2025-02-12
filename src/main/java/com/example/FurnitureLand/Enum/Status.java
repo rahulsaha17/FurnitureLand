@@ -1,7 +1,7 @@
 package com.example.FurnitureLand.Enum;
 
 public enum Status {
-    IN_STOCK,
+    AVAILABLE,
     SOLD,
     SELF_USED
 }

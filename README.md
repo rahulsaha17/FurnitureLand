@@ -26,19 +26,23 @@ FurnitureLand is a **Java Spring Boot** application designed to manage furniture
 ## API Endpoints  
 
 ### Customer API (`/api/customers`)  
-- **`POST /addCustomer`** - Add a new customer.  
-- **`POST /addCustomerCouponCode/{phoneNumber}/{couponCode}/{discountPercentage}`** - Assign a coupon to a customer.  
-- **`GET /phone/{phoneNumber}`** - Retrieve customer details.  
+- **`POST /addCustomer`** - Add a new customer. 
+- **`POST /updateCustomer/{id}`** - Update an existing customer.
+- **`POST /addCustomerCouponCode/{phoneNumber}/{discountPercentage}`** - Assign a discount to a customer.  
+- **`GET /phone/{phoneNumber}`** - Retrieve customer details by phone number.
+- **`GET /getCustomers`** - Retrieve all customers.
 
 ### Product API (`/api/products`)  
-- **`POST /`** - Add a new product.  
+- **`POST /addProduct`** - Add a new product
+- **`POST /updateProduct/{id}`** - Update an existing product.  
 - **`GET /hsn/{hsn}`** - Retrieve products by HSN.  
-- **`GET /code/{productCode}`** - Retrieve a product by code.  
+- **`GET /code/{productCode}`** - Retrieve products by product code.  
+- **`GET /getProductByDescription/{description}`** - Retrieve product by unique product description.
 - **`GET /getProducts`** - Get all available products.  
 
 ### Billing API (`/api/billings`)  
-- **`POST /`** - Create a new bill with applicable discounts.
+- **`POST /`** - Create a new billing entry.
 - **`GET /getBillings`** - Get all available billings. 
-- **`DELETE /cancel/{billingId}`** - Cancel a bill if required.  
+- **`DELETE /cancel/{billingId}`** - Cancel a billing if required.  
 
 

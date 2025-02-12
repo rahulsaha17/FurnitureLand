@@ -1,5 +1,6 @@
 package com.example.FurnitureLand.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,7 +36,9 @@ public class Billing {
     private Customer customer;
 
     @OneToMany(mappedBy = "billing", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Product> products;
+    @JsonManagedReference
+    private List<BillingProduct> purchasedProducts;
+
     @Column(name = "\"totalAmount\"")
     private double totalAmount;
     @Column(name = "\"gstNumber\"")

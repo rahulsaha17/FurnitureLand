@@ -1,6 +1,7 @@
 package com.example.FurnitureLand.Service;
 
 import com.example.FurnitureLand.Entity.Billing;
+import com.example.FurnitureLand.Entity.BillingProduct;
 import com.example.FurnitureLand.Entity.Customer;
 import com.example.FurnitureLand.Entity.Product;
 import com.example.FurnitureLand.Enum.Status;
@@ -35,73 +36,84 @@ public class BillingService {
             customer = customerService.addCustomer(customer);
         }
 
-        if (CollectionUtils.isEmpty(billing.getProducts())) {
+        if (CollectionUtils.isEmpty(billing.getPurchasedProducts())) {
             throw new RuntimeException("Billing must have at least one product.");
         }
-        // Validate product availability
-        for (Product orderedProduct : billing.getProducts()) {
-            Product existingProduct = productService.getProductById(orderedProduct.getId());
+
+        double totalAmount = 0.0;
+        List<BillingProduct> billingProductList = new ArrayList<>();
+
+        // Validate product availability & store product snapshot
+        for (BillingProduct billingProduct : billing.getPurchasedProducts()) {
+            Product existingProduct = productService.getProductByDescription(billingProduct.getProductDescription());
 
             if (existingProduct == null) {
-                throw new RuntimeException("Product with ID " + orderedProduct.getId() + " not found.");
+                throw new RuntimeException("Product with description " + billingProduct.getProductDescription() + " not found.");
             }
 
-            if (orderedProduct.getQuantity() > existingProduct.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product ID " + orderedProduct.getId());
+            if (billingProduct.getQuantity() > existingProduct.getQuantity()) {
+                throw new RuntimeException("Insufficient stock for product ID " + existingProduct.getId());
             }
-        }
 
-        // If validation passes, update product quantities
-        List<Product> updatedProducts = billing.getProducts().stream().map(orderedProduct -> {
-            Product existingProduct = productService.getProductById(orderedProduct.getId());
-
-            // Reduce quantity
-            int updatedQuantity = existingProduct.getQuantity() - orderedProduct.getQuantity();
-            existingProduct.setQuantity(updatedQuantity);
-
-            // If quantity becomes zero, mark status as SOLD
-            if (updatedQuantity == 0) {
+            // Reduce stock & update status
+            existingProduct.setQuantity(existingProduct.getQuantity() - billingProduct.getQuantity());
+            if (existingProduct.getQuantity() == 0) {
                 existingProduct.setStatus(Status.SOLD);
             }
+            productService.updateProduct(existingProduct.getId(), existingProduct);
 
-            return productService.updateProduct(existingProduct.getId(), existingProduct);
-        }).collect(Collectors.toList());
+            // Create snapshot of the purchased product
+            BillingProduct newBillingProduct = new BillingProduct();
+            newBillingProduct.setBilling(billing);
+            newBillingProduct.setProductDescription(existingProduct.getDescription());
+            newBillingProduct.setPriceAtPurchase(existingProduct.getMarketPrice());
+            newBillingProduct.setQuantity(billingProduct.getQuantity());
 
-        billing.setProducts(updatedProducts);
+            billingProductList.add(newBillingProduct);
+            totalAmount += newBillingProduct.getPriceAtPurchase() * newBillingProduct.getQuantity();
+        }
 
         // Apply customer discount if available
         if (customer.getDiscountPercentage() != null) {
-            double discount = (billing.getTotalAmount() * customer.getDiscountPercentage()) / 100;
-            billing.setTotalAmount(billing.getTotalAmount() - discount);
+            double discount = (totalAmount * customer.getDiscountPercentage()) / 100;
+            totalAmount -= discount;
 
             // Remove discount after use
             customer.setDiscountPercentage(null);
             customerService.updateCustomer(customer.getId(), customer);
         }
+
+        billing.setTotalAmount(totalAmount);
         billing.setCustomer(customer);
+        billing.setPurchasedProducts(billingProductList);
+
         return billingRepository.save(billing);
     }
+
 
     public void cancelBilling(Long billingId) {
         Billing billing = billingRepository.findById(billingId)
                 .orElseThrow(() -> new RuntimeException("Billing not found"));
 
         // Restore product quantities
-        billing.getProducts().forEach(product -> {
-            Product existingProduct = productService.getProductById(product.getId());
+        for (BillingProduct billingProduct : billing.getPurchasedProducts()) {
+            Product existingProduct = productService.getProductByDescription(billingProduct.getProductDescription());
 
-            existingProduct.setQuantity(existingProduct.getQuantity() + product.getQuantity());
+            if (existingProduct != null) {
+                existingProduct.setQuantity(existingProduct.getQuantity() + billingProduct.getQuantity());
 
-            // Change status back to IN_STOCK if it was SOLD
-            if (existingProduct.getStatus() == Status.SOLD) {
-                existingProduct.setStatus(Status.IN_STOCK);
+                // Change status back to AVAILABLE if it was SOLD
+                if (existingProduct.getStatus() == Status.SOLD) {
+                    existingProduct.setStatus(Status.AVAILABLE);
+                }
+
+                productService.updateProduct(existingProduct.getId(), existingProduct);
             }
-
-            productService.updateProduct(existingProduct.getId(), existingProduct);
-        });
+        }
 
         billingRepository.delete(billing);
     }
+
 
     public List<Billing> getAllBillings() {
         return billingRepository.findAll();

@@ -46,7 +46,7 @@
 			"response": []
 		},
 		{
-			"name": "Cance Billing",
+			"name": "Cancel Billing",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -155,7 +155,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/customers/getCustomers",
+					"raw": "http://localhost:8080/api/customers/phone/9876543210",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -164,7 +164,8 @@
 					"path": [
 						"api",
 						"customers",
-						"getCustomers"
+						"phone",
+						"9876543210"
 					]
 				}
 			},
@@ -281,6 +282,53 @@
 			"response": []
 		},
 		{
+			"name": "Update Product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"productCode\": \"P001\",\n    \"hsnNumber\": \"HSN12347\",\n    \"costPrice\": 55000.0,\n    \"marketPrice\": 70000.0,\n    \"description\": \"Wooden Grey Bed\",\n    \"color\": \"Grey\",\n    \"manufacturer\": \"Furniture Co\",\n    \"quantity\": 4,\n    \"status\": \"AVAILABLE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/products/updateProduct/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products",
+						"updateProduct",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create Product Billing",
 			"request": {
 				"auth": {
@@ -303,7 +351,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"customer\": {\n    \"id\": 1\n  },\n  \"products\": [\n    {\n      \"id\": 7\n    },\n    {\n      \"id\": 8\n    }\n  ],\n  \"totalAmount\": 20000.0,\n  \"gstNumber\": \"GST123456\",\n  \"billingDate\": \"2025-02-07T10:00:00\"\n}",
+					"raw": "{\n    \"customer\": {\n        \"phoneNumber\": \"8240204957\",\n        \"name\": \"Rahul Sen\",\n        \"email\": \"senrahul184@gmail.com\",\n        \"address\": \"Kolkata, India\"\n    },\n    \"purchasedProducts\": [\n        {\n            \"productDescription\": \"Wooden Black Bed\",\n            \"priceAtPurchase\": \"65000\",\n            \"quantity\": 1\n        },\n        {\n            \"productDescription\": \"Wooden Grey Bed\",\n            \"priceAtPurchase\": \"70000\",\n            \"quantity\": 1\n        }\n    ],\n    \"totalAmount\": 135000.0,\n    \"gstNumber\": \"GST123456\",\n    \"billingDate\": \"2025-02-12T10:00:00\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -366,6 +414,53 @@
 						"api",
 						"customers",
 						"addCustomer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"phoneNumber\": \"8240204957\",\n  \"name\": \"Rahul Saha\",\n  \"email\": \"saharahul384@gmail.com\",\n  \"address\": \"Kolkata, India\",\n  \"discountPercentage\": 10.0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/customers/updateCustomer/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"customers",
+						"updateCustomer",
+						"1"
 					]
 				}
 			},
