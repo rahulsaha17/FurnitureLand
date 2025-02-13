@@ -7,13 +7,13 @@ import com.example.FurnitureLand.Entity.Product;
 import com.example.FurnitureLand.Enum.Status;
 import com.example.FurnitureLand.Repositories.BillingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -27,14 +27,16 @@ public class BillingService {
     private ProductService productService;
 
     public Billing createBilling(Billing billing) {
-        if (billing.getCustomer() == null) {
-            throw new RuntimeException("Customer is mandatory for billing.");
+        if (billing.getCustomer() == null || billing.getCustomer().getPhoneNumber() == null) {
+            throw new RuntimeException("Customer with phone number is mandatory for billing.");
         }
 
         // Check if customer already exists, if not, add them
-        Customer customer = billing.getCustomer();
-        if (customer.getId() == null || customerService.getCustomerById(customer.getId()) == null) {
-            customer = customerService.addCustomer(customer);
+        Customer customer;
+        try {
+            customer = customerService.getCustomerByPhoneNumber(billing.getCustomer().getPhoneNumber());
+        } catch (RuntimeException e) {
+            customer = customerService.addCustomer(billing.getCustomer());
         }
 
         if (CollectionUtils.isEmpty(billing.getPurchasedProducts())) {
@@ -52,11 +54,11 @@ public class BillingService {
             Optional<Product> existingProduct = productService.getProductByBillingProductDetails(billingProduct);
 
             if (existingProduct.isEmpty()) {
-                throw new RuntimeException("Product with code " + billingProduct.getProductCode() + "and color" + billingProduct.getColor() + " not found.");
+                throw new RuntimeException("Product with productCode " + billingProduct.getProductCode() + " and color " + billingProduct.getColor() + " not found.");
             }
 
             if (billingProduct.getQuantity() > existingProduct.get().getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product ID " + existingProduct.get().getId());
+                throw new RuntimeException("Insufficient stock for product code " + existingProduct.get().getProductCode());
             }
 
             // Reduce stock & update status
@@ -64,16 +66,18 @@ public class BillingService {
             if (existingProduct.get().getQuantity() == 0) {
                 existingProduct.get().setStatus(Status.SOLD);
             }
-            productService.updateProduct(existingProduct.get().getId(), existingProduct.get());
 
             // Create snapshot of the purchased product
             BillingProduct newBillingProduct = new BillingProduct();
             newBillingProduct.setBilling(billing);
             newBillingProduct.setPriceAtPurchase(existingProduct.get().getMarketPrice());
+            newBillingProduct.setProductCode(existingProduct.get().getProductCode());
             newBillingProduct.setQuantity(billingProduct.getQuantity());
+            newBillingProduct.setColor(billingProduct.getColor());
 
             billingProductList.add(newBillingProduct);
             totalAmount += newBillingProduct.getPriceAtPurchase() * newBillingProduct.getQuantity();
+            productService.updateProduct(existingProduct.get().getId(), existingProduct.get());
         }
 
         // Apply customer discount if available

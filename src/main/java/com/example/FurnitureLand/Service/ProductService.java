@@ -4,8 +4,11 @@ import com.example.FurnitureLand.Entity.BillingProduct;
 import com.example.FurnitureLand.Entity.Product;
 import com.example.FurnitureLand.Enum.Status;
 import com.example.FurnitureLand.Repositories.ProductRepository;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,5 +90,29 @@ public class ProductService {
 
         }
         return Optional.empty();
+    }
+
+    public List<Product> getProductsByFilters(String hsnNumber, String productCode, String color, String manufacturer, Status status) {
+        return productRepository.findAll((root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (hsnNumber != null && !hsnNumber.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("hsnNumber"), hsnNumber));
+            }
+            if (productCode != null && !productCode.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("productCode"), productCode));
+            }
+            if (color != null && !color.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("color"), color));
+            }
+            if (manufacturer != null && !manufacturer.isEmpty()) {
+                predicates.add(criteriaBuilder.equal(root.get("manufacturer"), manufacturer));
+            }
+            if (status != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        });
     }
 }

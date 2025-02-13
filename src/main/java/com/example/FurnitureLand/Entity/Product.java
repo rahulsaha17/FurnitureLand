@@ -34,7 +34,6 @@ public class Product {
     private double costPrice;
     @Column(name = "\"marketPrice\"")
     private double marketPrice;
-    @Column(nullable = false)
     private String description;
     private String color;
     @Column(nullable = false)
