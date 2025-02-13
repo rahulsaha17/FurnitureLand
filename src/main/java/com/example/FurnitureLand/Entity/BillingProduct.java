@@ -25,10 +25,11 @@ public class BillingProduct {
     @JoinColumn(name = "billing_id")
     @JsonBackReference
     private Billing billing;
-    @Column(name = "\"productDescription\"", nullable = false)
-    private String productDescription;
     @Column(name = "\"priceAtPurchase\"", nullable = false)
     private double priceAtPurchase;
+    @Column(name = "\"productCode\"", nullable = false)
+    private String productCode;
+    private String color;
     @Column(nullable = false)
     private int quantity;
 
@@ -36,7 +37,6 @@ public class BillingProduct {
 
     public BillingProduct(Product product, Billing billing, int quantity) {
         this.billing = billing;
-        this.productDescription = product.getDescription();
         this.priceAtPurchase = product.getMarketPrice();
         this.quantity = quantity;
     }

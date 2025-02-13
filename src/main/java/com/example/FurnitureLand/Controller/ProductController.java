@@ -50,21 +50,12 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/getProductByDescription/{description}")
-    public ResponseEntity<?> getProductByDescription(@PathVariable String description) {
-        try {
-            Product product = productService.getProductByDescription(description);
-            return ResponseEntity.ok(product);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
     @GetMapping("/code/{productCode}")
     public ResponseEntity<List<Product>> getProductByCode(@PathVariable String productCode) {
         List<Product> products = productService.getProductsByCode(productCode);
         return ResponseEntity.ok(products);
     }
+
     @GetMapping("/getProducts")
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();

@@ -12,6 +12,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -45,28 +46,30 @@ public class BillingService {
 
         // Validate product availability & store product snapshot
         for (BillingProduct billingProduct : billing.getPurchasedProducts()) {
-            Product existingProduct = productService.getProductByDescription(billingProduct.getProductDescription());
+            if (billingProduct.getProductCode()==null) {
+                throw new RuntimeException("Billing product must have a product code.");
+            }
+            Optional<Product> existingProduct = productService.getProductByBillingProductDetails(billingProduct);
 
-            if (existingProduct == null) {
-                throw new RuntimeException("Product with description " + billingProduct.getProductDescription() + " not found.");
+            if (existingProduct.isEmpty()) {
+                throw new RuntimeException("Product with code " + billingProduct.getProductCode() + "and color" + billingProduct.getColor() + " not found.");
             }
 
-            if (billingProduct.getQuantity() > existingProduct.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for product ID " + existingProduct.getId());
+            if (billingProduct.getQuantity() > existingProduct.get().getQuantity()) {
+                throw new RuntimeException("Insufficient stock for product ID " + existingProduct.get().getId());
             }
 
             // Reduce stock & update status
-            existingProduct.setQuantity(existingProduct.getQuantity() - billingProduct.getQuantity());
-            if (existingProduct.getQuantity() == 0) {
-                existingProduct.setStatus(Status.SOLD);
+            existingProduct.get().setQuantity(existingProduct.get().getQuantity() - billingProduct.getQuantity());
+            if (existingProduct.get().getQuantity() == 0) {
+                existingProduct.get().setStatus(Status.SOLD);
             }
-            productService.updateProduct(existingProduct.getId(), existingProduct);
+            productService.updateProduct(existingProduct.get().getId(), existingProduct.get());
 
             // Create snapshot of the purchased product
             BillingProduct newBillingProduct = new BillingProduct();
             newBillingProduct.setBilling(billing);
-            newBillingProduct.setProductDescription(existingProduct.getDescription());
-            newBillingProduct.setPriceAtPurchase(existingProduct.getMarketPrice());
+            newBillingProduct.setPriceAtPurchase(existingProduct.get().getMarketPrice());
             newBillingProduct.setQuantity(billingProduct.getQuantity());
 
             billingProductList.add(newBillingProduct);
@@ -97,17 +100,17 @@ public class BillingService {
 
         // Restore product quantities
         for (BillingProduct billingProduct : billing.getPurchasedProducts()) {
-            Product existingProduct = productService.getProductByDescription(billingProduct.getProductDescription());
+            Optional<Product> existingProduct = productService.getProductByBillingProductDetails(billingProduct);
 
-            if (existingProduct != null) {
-                existingProduct.setQuantity(existingProduct.getQuantity() + billingProduct.getQuantity());
+            if (existingProduct.isPresent()) {
+                existingProduct.get().setQuantity(existingProduct.get().getQuantity() + billingProduct.getQuantity());
 
                 // Change status back to AVAILABLE if it was SOLD
-                if (existingProduct.getStatus() == Status.SOLD) {
-                    existingProduct.setStatus(Status.AVAILABLE);
+                if (existingProduct.get().getStatus() == Status.SOLD) {
+                    existingProduct.get().setStatus(Status.AVAILABLE);
                 }
 
-                productService.updateProduct(existingProduct.getId(), existingProduct);
+                productService.updateProduct(existingProduct.get().getId(), existingProduct.get());
             }
         }
 

@@ -37,7 +37,6 @@ FurnitureLand is a **Java Spring Boot** application designed to manage furniture
 - **`POST /updateProduct/{id}`** - Update an existing product.  
 - **`GET /hsn/{hsn}`** - Retrieve products by HSN.  
 - **`GET /code/{productCode}`** - Retrieve products by product code.  
-- **`GET /getProductByDescription/{description}`** - Retrieve product by unique product description.
 - **`GET /getProducts`** - Get all available products.  
 
 ### Billing API (`/api/billings`)  

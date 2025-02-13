@@ -34,9 +34,10 @@ public class Product {
     private double costPrice;
     @Column(name = "\"marketPrice\"")
     private double marketPrice;
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String description;
     private String color;
+    @Column(nullable = false)
     private Integer quantity;
     private String manufacturer;
     @Enumerated(EnumType.STRING)

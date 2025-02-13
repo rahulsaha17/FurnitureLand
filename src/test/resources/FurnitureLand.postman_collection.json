@@ -351,7 +351,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"customer\": {\n        \"phoneNumber\": \"8240204957\",\n        \"name\": \"Rahul Sen\",\n        \"email\": \"senrahul184@gmail.com\",\n        \"address\": \"Kolkata, India\"\n    },\n    \"purchasedProducts\": [\n        {\n            \"productDescription\": \"Wooden Black Bed\",\n            \"priceAtPurchase\": \"65000\",\n            \"quantity\": 1\n        },\n        {\n            \"productDescription\": \"Wooden Grey Bed\",\n            \"priceAtPurchase\": \"70000\",\n            \"quantity\": 1\n        }\n    ],\n    \"totalAmount\": 135000.0,\n    \"gstNumber\": \"GST123456\",\n    \"billingDate\": \"2025-02-12T10:00:00\"\n}",
+					"raw": "{\n    \"customer\": {\n        \"phoneNumber\": \"8240204957\",\n        \"name\": \"Rahul Sen\",\n        \"email\": \"senrahul184@gmail.com\",\n        \"address\": \"Kolkata, India\"\n    },\n    \"purchasedProducts\": [\n        {\n            \"priceAtPurchase\": \"65000\",\n            \"productCode\": \"p001\",\n            \"color\": \"Black\",\n            \"quantity\": 1\n        },\n        {\n            \"productCode\": \"p001\",\n            \"color\": \"Grey\",\n            \"priceAtPurchase\": \"70000\",\n            \"quantity\": 1\n        }\n    ],\n    \"totalAmount\": 135000.0,\n    \"gstNumber\": \"GST123456\",\n    \"billingDate\": \"2025-02-12T10:00:00\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

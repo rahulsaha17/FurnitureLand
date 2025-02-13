@@ -1,5 +1,6 @@
 package com.example.FurnitureLand.Service;
 
+import com.example.FurnitureLand.Entity.BillingProduct;
 import com.example.FurnitureLand.Entity.Product;
 import com.example.FurnitureLand.Enum.Status;
 import com.example.FurnitureLand.Repositories.ProductRepository;
@@ -7,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -73,7 +73,19 @@ public class ProductService {
         }
     }
 
-    public Product getProductByDescription(String productDescription) {
-        return productRepository.findByDescription(productDescription);
+
+    public Optional<Product> getProductByBillingProductDetails(BillingProduct billingProduct) {
+        if(billingProduct.getProductCode()!=null){
+            List<Product> productsByCode = getProductsByCode(billingProduct.getProductCode());
+            if(!productsByCode.isEmpty()){
+                if(billingProduct.getColor()!=null){
+                    return productsByCode.stream().filter(product -> product.getColor().equalsIgnoreCase(billingProduct.getColor())).findFirst();
+                }else {
+                    return Optional.ofNullable(productsByCode.get(0));
+                }
+            }
+
+        }
+        return Optional.empty();
     }
 }
