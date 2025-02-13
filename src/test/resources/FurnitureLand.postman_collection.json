@@ -8,9 +8,55 @@
 	"item": [
 		{
 			"name": "Authenticate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"admin123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
 			},
 			"response": []
 		},
@@ -46,7 +92,48 @@
 			"response": []
 		},
 		{
-			"name": "Cance Billing",
+			"name": "Get Products by values",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/products/getProductsByDetails?color=Black&manufacturer=Furniture Co",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products",
+						"getProductsByDetails"
+					],
+					"query": [
+						{
+							"key": "color",
+							"value": "Black"
+						},
+						{
+							"key": "manufacturer",
+							"value": "Furniture Co"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel Billing",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -155,7 +242,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/customers/getCustomers",
+					"raw": "http://localhost:8080/api/customers/phone/9876543210",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -164,7 +251,8 @@
 					"path": [
 						"api",
 						"customers",
-						"getCustomers"
+						"phone",
+						"9876543210"
 					]
 				}
 			},
@@ -203,38 +291,6 @@
 			"response": []
 		},
 		{
-			"name": "Get Product by Hsn",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{token}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/products/hsn/HSN12345",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"products",
-						"hsn",
-						"HSN12345"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Add Product",
 			"request": {
 				"auth": {
@@ -257,7 +313,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"productCode\": \"P001\",\n    \"hsnNumber\": \"HSN12345\",\n    \"costPrice\": 5000.0,\n    \"marketPrice\": 7000.0,\n    \"description\": \"Wooden Chair\",\n    \"color\": \"Brown\",\n    \"manufacturer\": \"Furniture Co\",\n    \"status\": \"AVAILABLE\"\n}",
+					"raw": "{\n    \"productCode\": \"P002\",\n    \"hsnNumber\": \"HSN12348\",\n    \"costPrice\": 60000.0,\n    \"marketPrice\": 80000.0,\n    \"description\": \"Wooden Bed\",\n    \"color\": \"Brown\",\n    \"manufacturer\": \"Furniture Co\",\n    \"quantity\": 3,\n    \"status\": \"AVAILABLE\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -275,6 +331,53 @@
 						"api",
 						"products",
 						"addProduct"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"productCode\": \"P002\",\n    \"hsnNumber\": \"HSN12348\",\n    \"costPrice\": 60000.0,\n    \"marketPrice\": 80000.0,\n    \"description\": \"Wooden Bed\",\n    \"color\": \"Black\",\n    \"manufacturer\": \"Furniture Co\",\n    \"quantity\": 2,\n    \"status\": \"AVAILABLE\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/products/updateProduct/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"products",
+						"updateProduct",
+						"2"
 					]
 				}
 			},
@@ -303,7 +406,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"customer\": {\n    \"id\": 1\n  },\n  \"products\": [\n    {\n      \"id\": 7\n    },\n    {\n      \"id\": 8\n    }\n  ],\n  \"totalAmount\": 20000.0,\n  \"gstNumber\": \"GST123456\",\n  \"billingDate\": \"2025-02-07T10:00:00\"\n}",
+					"raw": "{\n    \"customer\": {\n        \"phoneNumber\": \"8240204957\",\n        \"name\": \"Rahul Sen\",\n        \"email\": \"senrahul184@gmail.com\",\n        \"address\": \"Kolkata, India\"\n    },\n    \"purchasedProducts\": [\n        {\n            \"productCode\": \"P002\",\n            \"color\": \"Brown\",\n            \"quantity\": 1\n        },\n        {\n            \"productCode\": \"P001\",\n            \"quantity\": 1\n        }\n    ],\n    \"gstNumber\": \"GST123456\",\n    \"billingDate\": \"2025-02-13T10:00:00\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -366,6 +469,53 @@
 						"api",
 						"customers",
 						"addCustomer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"phoneNumber\": \"8240204957\",\n  \"name\": \"Rahul Saha\",\n  \"email\": \"saharahul384@gmail.com\",\n  \"address\": \"Kolkata, India\",\n  \"discountPercentage\": 10.0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/customers/updateCustomer/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"customers",
+						"updateCustomer",
+						"1"
 					]
 				}
 			},

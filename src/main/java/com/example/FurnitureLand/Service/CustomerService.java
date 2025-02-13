@@ -1,11 +1,13 @@
 package com.example.FurnitureLand.Service;
 
 import com.example.FurnitureLand.Entity.Customer;
+import com.example.FurnitureLand.Entity.Product;
 import com.example.FurnitureLand.Repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -34,5 +36,24 @@ public class CustomerService {
     public Customer getCustomerById(Long customerId) {
         return customerRepository.findById(customerId)
                 .orElse(null);
+    }
+
+    public Customer updateCustomer(Long id, Customer updatedCustomer) {
+        Optional<Customer> existingCustomerOpt = customerRepository.findById(id);
+
+        if (existingCustomerOpt.isPresent()) {
+            Customer existingCustomer = existingCustomerOpt.get();
+
+            // Update fields
+            existingCustomer.setPhoneNumber(updatedCustomer.getPhoneNumber());
+            existingCustomer.setName(updatedCustomer.getName());
+            existingCustomer.setEmail(updatedCustomer.getEmail());
+            existingCustomer.setAddress(updatedCustomer.getAddress());
+            existingCustomer.setDiscountPercentage(updatedCustomer.getDiscountPercentage());
+
+            return customerRepository.save(existingCustomer);
+        } else {
+            throw new RuntimeException("Customer not found with ID: " + id);
+        }
     }
 }
